@@ -1,6 +1,7 @@
 package com.my.member_app.controller;
 
 import com.my.member_app.dto.MemberDto;
+import com.my.member_app.dto.SearchDto;
 import com.my.member_app.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -48,7 +49,7 @@ public class MemberController {
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam("deleteId")Long deleteId,
+    public String delete(@RequestParam("deleteId") Long deleteId,
                          RedirectAttributes redirectAttributes) {
         log.info("=====deleteId : " + deleteId);
         memberService.delete(deleteId);
@@ -59,7 +60,7 @@ public class MemberController {
 
     @GetMapping("update")
     public String updateFormView(Model model,
-                                 @RequestParam("updateId")Long updateId,
+                                 @RequestParam("updateId") Long updateId,
                                  RedirectAttributes redirectAttributes) {
         // 1. 선택한 id를 가져오는지 확인
         log.info("=====updateId : " + updateId);
@@ -79,7 +80,7 @@ public class MemberController {
 
     // update > post
     @PostMapping("/update")
-    public String update(@ModelAttribute("dto")MemberDto dto,
+    public String update(@ModelAttribute("dto") MemberDto dto,
                          RedirectAttributes redirectAttributes) {
         // 찍어보기
         log.info("updatedDto : " + dto);
@@ -88,4 +89,15 @@ public class MemberController {
                 "정상적으로 수정되었습니다.");
         return "redirect:/member/view";
     }
+
+    @GetMapping("/search")
+    public String search(SearchDto searchDto,
+                         Model model) {
+        log.info("SearchDto = " + searchDto);
+        List<MemberDto> result = memberService
+                .search(searchDto.getType(), searchDto.getKeyword());
+        model.addAttribute("lists", result);
+        return "showMember";
+    }
 }
+
